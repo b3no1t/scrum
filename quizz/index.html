@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz sur les Événements Scrum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #c9d2db;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: rgba(86, 110, 109, 0.3);
+            color: white;
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #667eea;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .tab-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .content {
+            display: none;
+        }
+
+        .content.active {
+            display: block;
+        }
+
+        .schema-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .sprint-container {
+            background-color: rgba(244, 165, 96, 0.459);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+
+        .sprint-title {
+            color: white;
+            font-size: 2em;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .sprint-duration {
+            color: white;
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+
+        .event-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .event-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+
+        .event-card.planning { border-left-color: #3b82f6; }
+        .event-card.daily { border-left-color: #10b981; }
+        .event-card.review { border-left-color: #f59e0b; }
+        .event-card.retro { border-left-color: #ef4444; }
+
+        .quiz-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .question-card {
+            background: #f8fafc;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .question-card h3 {
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .option-button {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 2px solid #cbd5e1d8;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .option-button:hover {
+            border-color: #667eea;
+            background: #f1f5f9;
+        }
+
+        .option-button.selected {
+            background: #e0e7ff;
+            border-color: #667eea;
+            font-weight: bold;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .submit-button:hover:not(:disabled) {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-button:disabled {
+            background: #cbd5e1;
+            cursor: not-allowed;
+        }
+
+        .results-container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .score-card {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .score-card h2 {
+            font-size: 3em;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .score-card p {
+            font-size: 1.5em;
+            color: #475569;
+        }
+
+        .result-card {
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .result-card.correct {
+            background: #dcfce7;
+            border: 2px solid #22c55e;
+        }
+
+        .result-card.incorrect {
+            background: #fee2e2;
+            border: 2px solid #ef4444;
+        }
+
+        .result-icon {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .explanation {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .footer {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .tip-box {
+            background: #fef3c7;
+            border: 2px solid #fbbf24;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        .tip-box p {
+            color: #92400e;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Quiz Événements Scrum</h1>
+            <p>Testez vos connaissances sur les 5 événements Scrum</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" onclick="showTab('schema')">📊 Schéma Visuel</button>
+            <button class="tab-button" onclick="showTab('quiz')">❓ Questions</button>
+        </div>
+
+        <div id="schema" class="content active">
+            <div class="schema-container">
+                <div class="sprint-container">
+                    <h2 class="sprint-title">SPRINT (Conteneur)</h2>
+                    <p class="sprint-duration">Durée fixe : 1 mois maximum</p>
+                    
+                    <div class="event-card planning">
+                        <h3>1️⃣ Sprint Planning</h3>
+                        <p>Lance le Sprint • Max 8h (Sprint d'1 mois)</p>
+                        <p style="color: #64748b; margin-top: 5px;">➜ Définit POURQUOI, QUOI et COMMENT</p>
+                    </div>
+
+                    <div class="event-card daily">
+                        <h3>2️⃣ Daily Scrum</h3>
+                        <p>Chaque jour • 15 minutes exactement</p>
+                        <p style="color: #64748b; margin-top: 5px;">➜ Pour les Developers uniquement</p>
+                    </div>
+
+                    <div class="event-card review">
+                        <h3>3️⃣ Sprint Review</h3>
+                        <p>Fin de Sprint • Max 4h (Sprint d'1 mois)</p>
+                        <p style="color: #64748b; margin-top: 5px;">➜ Présentation aux parties prenantes</p>
+                    </div>
+
+                    <div class="event-card retro">
+                        <h3>4️⃣ Sprint Retrospective</h3>
+                        <p>Conclut le Sprint • Max 3h (Sprint d'1 mois)</p>
+                        <p style="color: #64748b; margin-top: 5px;">➜ Amélioration continue de l'équipe</p>
+                    </div>
+                </div>
+
+                <div class="tip-box">
+                    <p>💡 Astuce : Tous les événements se déroulent DANS le Sprint</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="quiz" class="content">
+            <div id="quiz-questions" class="quiz-container">
+                <!-- Questions seront injectées ici par JavaScript -->
+            </div>
+
+            <div id="quiz-results" class="results-container" style="display: none;">
+                <!-- Résultats seront injectés ici par JavaScript -->
+            </div>
+        </div>
+
+        <div class="footer">
+            📚 <a href="https://scrumguides.org" target="_blank">Guide Scrum officiel</a>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                id: 1,
+                question: "Quel est le seul événement qui contient tous les autres événements Scrum ?",
+                options: ["Sprint Planning", "Sprint", "Sprint Review", "Sprint Retrospective"],
+                correct: 1,
+                explanation: "Le Sprint est le conteneur de tous les autres événements. C'est le cœur de Scrum où les idées sont transformées en valeur."
+            },
+            {
+                id: 2,
+                question: "Quelle est la durée maximale d'un Daily Scrum ?",
+                options: ["30 minutes", "15 minutes", "1 heure", "Pas de limite"],
+                correct: 1,
+                explanation: "Le Daily Scrum dure exactement 15 minutes, à la même heure et au même lieu chaque jour ouvré du Sprint."
+            },
+            {
+                id: 3,
+                question: "Qui participe obligatoirement au Daily Scrum ?",
+                options: ["Toute la Scrum Team", "Les Developers", "Le Product Owner", "Le Scrum Master"],
+                correct: 1,
+                explanation: "Le Daily Scrum est un événement pour les Developers. Le PO et le SM participent seulement s'ils travaillent activement sur des éléments du Sprint Backlog."
+            },
+            {
+                id: 4,
+                question: "Quel événement permet de définir l'Objectif de Sprint ?",
+                options: ["Daily Scrum", "Sprint Review", "Sprint Planning", "Sprint Retrospective"],
+                correct: 2,
+                explanation: "L'Objectif de Sprint est créé pendant le Sprint Planning et doit être finalisé avant la fin de cet événement."
+            },
+            {
+                id: 5,
+                question: "Quelle est la durée maximale d'un Sprint Planning pour un Sprint d'un mois ?",
+                options: ["4 heures", "8 heures", "2 heures", "1 journée"],
+                correct: 1,
+                explanation: "Le Sprint Planning est limité à 8 heures maximum pour un Sprint d'un mois. Pour les Sprints plus courts, l'événement est généralement plus court."
+            },
+            {
+                id: 6,
+                question: "Quel est l'objectif principal de la Sprint Retrospective ?",
+                options: ["Présenter le produit", "Planifier le prochain Sprint", "Améliorer la qualité et l'efficacité", "Inspecter le Product Backlog"],
+                correct: 2,
+                explanation: "La Sprint Retrospective vise à améliorer la qualité et l'efficacité en inspectant le déroulement du dernier Sprint."
+            },
+            {
+                id: 7,
+                question: "Pendant quel événement la Scrum Team présente-t-elle les résultats aux parties prenantes ?",
+                options: ["Sprint Planning", "Daily Scrum", "Sprint Review", "Sprint Retrospective"],
+                correct: 2,
+                explanation: "La Sprint Review permet à la Scrum Team de présenter les résultats de son travail aux principales parties prenantes."
+            },
+            {
+                id: 8,
+                question: "Quel événement conclut le Sprint ?",
+                options: ["Sprint Review", "Sprint Retrospective", "Daily Scrum", "Sprint Planning"],
+                correct: 1,
+                explanation: "La Sprint Retrospective conclut le Sprint. Elle est limitée à 3 heures maximum pour un Sprint d'un mois."
+            }
+        ];
+
+        let answers = {};
+
+        function showTab(tabName) {
+            // Masquer tous les contenus
+            document.querySelectorAll('.content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+            
+            // Afficher le contenu sélectionné
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Si on affiche le quiz, le générer
+            if (tabName === 'quiz' && document.getElementById('quiz-questions').children.length === 0) {
+                generateQuiz();
+            }
+        }
+
+        function generateQuiz() {
+            const container = document.getElementById('quiz-questions');
+            let html = '';
+            
+            questions.forEach((q, index) => {
+                html += `
+                    <div class="question-card">
+                        <h3>Question ${index + 1} : ${q.question}</h3>
+                        <div>
+                            ${q.options.map((option, optIndex) => `
+                                <button class="option-button" onclick="selectAnswer(${q.id}, ${optIndex})">
+                                    ${option}
+                                </button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                <button class="submit-button" id="submit-btn" onclick="showResults()" disabled>
+                    ⏳ Répondez aux ${questions.length} questions
+                </button>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        function selectAnswer(questionId, answerIndex) {
+            answers[questionId] = answerIndex;
+            
+            // Mettre à jour l'apparence des boutons
+            const questionCards = document.querySelectorAll('.question-card');
+            questionCards.forEach((card, index) => {
+                if (questions[index].id === questionId) {
+                    const buttons = card.querySelectorAll('.option-button');
+                    buttons.forEach((btn, idx) => {
+                        btn.classList.toggle('selected', idx === answerIndex);
+                    });
+                }
+            });
+            
+            // Mettre à jour le bouton de soumission
+            const submitBtn = document.getElementById('submit-btn');
+            const answeredCount = Object.keys(answers).length;
+            
+            if (answeredCount === questions.length) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '✅ Voir mes résultats';
+            } else {
+                submitBtn.textContent = `⏳ Répondez aux ${questions.length - answeredCount} questions restantes`;
+            }
+        }
+
+        function showResults() {
+            document.getElementById('quiz-questions').style.display = 'none';
+            document.getElementById('quiz-results').style.display = 'block';
+            
+            let score = 0;
+            questions.forEach(q => {
+                if (answers[q.id] === q.correct) score++;
+            });
+            
+            let message = '';
+            if (score === questions.length) {
+                message = '🎉 Parfait ! Vous maîtrisez les événements Scrum !';
+            } else if (score >= questions.length * 0.7) {
+                message = '👍 Très bien ! Quelques petites révisions et ce sera parfait !';
+            } else {
+                message = '📚 Continuez à apprendre ! Relisez le guide Scrum.';
+            }
+            
+            let html = `
+                <div class="score-card">
+                    <h2>Score : ${score} / ${questions.length}</h2>
+                    <p>${message}</p>
+                </div>
+            `;
+            
+            questions.forEach((q, index) => {
+                const isCorrect = answers[q.id] === q.correct;
+                html += `
+                    <div class="result-card ${isCorrect ? 'correct' : 'incorrect'}">
+                        <div>
+                            <span class="result-icon">${isCorrect ? '✅' : '❌'}</span>
+                            <strong>Question ${index + 1} :</strong> ${q.question}
+                        </div>
+                        <p style="margin-top: 10px;">
+                            <strong>Votre réponse :</strong> ${q.options[answers[q.id]]}
+                        </p>
+                        ${!isCorrect ? `
+                            <p style="margin-top: 5px; color: #16a34a;">
+                                <strong>Bonne réponse :</strong> ${q.options[q.correct]}
+                            </p>
+                        ` : ''}
+                        <div class="explanation">
+                            <strong>💡 Explication :</strong> ${q.explanation}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                <button class="submit-button" onclick="resetQuiz()">
+                    🔄 Recommencer le quiz
+                </button>
+            `;
+            
+            document.getElementById('quiz-results').innerHTML = html;
+        }
+
+        function resetQuiz() {
+            answers = {};
+            document.getElementById('quiz-questions').style.display = 'block';
+            document.getElementById('quiz-questions').innerHTML = '';
+            document.getElementById('quiz-results').style.display = 'none';
+            generateQuiz();
+        }
+    </script>
+</body>
+</html>
